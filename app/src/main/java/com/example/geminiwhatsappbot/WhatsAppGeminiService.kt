@@ -301,7 +301,14 @@ class WhatsAppGeminiService : NotificationListenerService(), TextToSpeech.OnInit
 
             val response = httpClient.newCall(request).execute()
             if (!response.isSuccessful) {
-                Log.e(TAG, "Gemini API error code: ${response.code}")
+                val errCode = response.code
+                val errBody = response.body?.string() ?: ""
+                Log.e(TAG, "Gemini API error code: $errCode, body: $errBody")
+                if (errCode == 403) {
+                    logActivity(sender, message, "⚠️ Error: API Key Revoked/Leaked (HTTP 403). Enter new key in app.")
+                } else {
+                    logActivity(sender, message, "⚠️ Error: Gemini API HTTP $errCode")
+                }
                 return null
             }
 
