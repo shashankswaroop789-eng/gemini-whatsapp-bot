@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit
 object UpdateManager {
 
     private const val TAG = "UpdateManager"
-    const val CURRENT_VERSION = "v1.0.0"
+    const val CURRENT_VERSION = "v1.2.0"
     private const val REPO_OWNER = "shashankswaroop789-eng"
     private const val REPO_NAME = "gemini-whatsapp-bot"
     private const val GITHUB_API_URL = "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/releases/latest"
@@ -32,7 +32,18 @@ object UpdateManager {
         .readTimeout(30, TimeUnit.SECONDS)
         .build()
 
+    fun getInstalledVersion(context: Context): String {
+        return try {
+            val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+            val name = pInfo.versionName
+            if (name.isNullOrBlank()) CURRENT_VERSION else if (name.startsWith("v")) name else "v$name"
+        } catch (e: Exception) {
+            CURRENT_VERSION
+        }
+    }
+
     fun checkForUpdate(context: Context, isManualCheck: Boolean = false, onComplete: ((Boolean) -> Unit)? = null) {
+        val currentVersion = getInstalledVersion(context)
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val request = Request.Builder()
@@ -44,7 +55,7 @@ object UpdateManager {
                 if (!response.isSuccessful) {
                     withContext(Dispatchers.Main) {
                         if (isManualCheck) {
-                            Toast.makeText(context, "You are using the latest version ($CURRENT_VERSION)", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "You are using the latest version ($currentVersion)", Toast.LENGTH_SHORT).show()
                         }
                         onComplete?.invoke(false)
                     }
@@ -69,7 +80,7 @@ object UpdateManager {
                     }
                 }
 
-                val isNewer = isVersionNewer(latestTag, CURRENT_VERSION)
+                val isNewer = isVersionNewer(latestTag, currentVersion)
 
                 withContext(Dispatchers.Main) {
                     if (isNewer && apkDownloadUrl.isNotBlank()) {
@@ -77,7 +88,7 @@ object UpdateManager {
                         onComplete?.invoke(true)
                     } else {
                         if (isManualCheck) {
-                            Toast.makeText(context, "App is up to date ($CURRENT_VERSION) ✓", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "App is up to date ($currentVersion) ✓", Toast.LENGTH_SHORT).show()
                         }
                         onComplete?.invoke(false)
                     }
@@ -86,7 +97,7 @@ object UpdateManager {
                 Log.e(TAG, "Error checking for updates", e)
                 withContext(Dispatchers.Main) {
                     if (isManualCheck) {
-                        Toast.makeText(context, "App is up to date ($CURRENT_VERSION)", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "App is up to date ($currentVersion)", Toast.LENGTH_SHORT).show()
                     }
                     onComplete?.invoke(false)
                 }
@@ -94,10 +105,21 @@ object UpdateManager {
         }
     }
 
-    private fun isVersionNewer(latest: String, current: String): Boolean {
-        val cleanLatest = latest.removePrefix("v").trim()
-        val cleanCurrent = current.removePrefix("v").trim()
-        return cleanLatest != cleanCurrent && cleanLatest.isNotBlank()
+    fun isVersionNewer(latest: String, current: String): Boolean {
+        return try {
+            val lParts = latest.removePrefix("v").trim().split(".").map { it.toIntOrNull() ?: 0 }
+            val cParts = current.removePrefix("v").trim().split(".").map { it.toIntOrNull() ?: 0 }
+            val maxLen = maxOf(lParts.size, cParts.size)
+            for (i in 0 until maxLen) {
+                val l = if (i < lParts.size) lParts[i] else 0
+                val c = if (i < cParts.size) cParts[i] else 0
+                if (l > c) return true
+                if (l < c) return false
+            }
+            false
+        } catch (e: Exception) {
+            false
+        }
     }
 
     private fun showUpdateDialog(context: Context, newVersion: String, notes: String, downloadUrl: String) {

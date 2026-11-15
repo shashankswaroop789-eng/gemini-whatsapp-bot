@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Chronicle purged ✓", Toast.LENGTH_SHORT).show()
         }
 
-        tvVersionTag.text = "Version ${UpdateManager.CURRENT_VERSION} • Titanium Edition"
+        tvVersionTag.text = "Version ${UpdateManager.getInstalledVersion(this)} • Titanium Edition"
 
         // 1. START LUXURY CHRONO & HALO ANIMATIONS
         startLuxuryAnimations()
