@@ -95,7 +95,16 @@ class WhatsAppGeminiService : NotificationListenerService(), TextToSpeech.OnInit
             return
         }
 
-        // 2. ANTI-LOOP CHECK: Inspect MessagingStyle messages to verify if the latest message was sent by US
+        // 2. GROUP CHAT SHIELD: Enforce 1-on-1 direct messages only if enabled
+        val prefs = getSharedPreferences("bot_prefs", Context.MODE_PRIVATE)
+        val ignoreGroups = prefs.getBoolean("ignore_groups", true)
+        if (ignoreGroups && isGroupNotification(extras, sender)) {
+            Log.d(TAG, "GROUP SHIELD: Ignored message from group chat '$sender'. Direct 1-on-1 mode active.")
+            incrementStat("loops_prevented")
+            return
+        }
+
+        // 3. ANTI-LOOP CHECK: Inspect MessagingStyle messages to verify if the latest message was sent by US
         val (actualMessageText, isFromMe, msgTimestamp) = extractLatestMessageInfo(extras)
 
         if (isFromMe) {
@@ -149,7 +158,6 @@ class WhatsAppGeminiService : NotificationListenerService(), TextToSpeech.OnInit
         incrementStat("messages_monitored")
 
         // 7. Read user configuration
-        val prefs = getSharedPreferences("bot_prefs", Context.MODE_PRIVATE)
         val isBotEnabled = prefs.getBoolean("bot_enabled", true)
         val apiKey = prefs.getString("gemini_api_key", "") ?: ""
         val persona = prefs.getString("persona", "grok") ?: "grok"
@@ -257,6 +265,56 @@ class WhatsAppGeminiService : NotificationListenerService(), TextToSpeech.OnInit
         }
 
         return Triple(messageText.trim(), isFromMe, timestamp)
+    }
+
+    /**
+     * Accurately detects whether a notification is from a WhatsApp Group Chat.
+     */
+    private fun isGroupNotification(extras: Bundle, sender: String): Boolean {
+        // 1. Android standard Notification.EXTRA_IS_GROUP_CONVERSATION (API 28+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            if (extras.getBoolean(Notification.EXTRA_IS_GROUP_CONVERSATION, false)) {
+                return true
+            }
+        }
+
+        // 2. EXTRA_CONVERSATION_TITLE is present and not empty (WhatsApp sets this to Group Name)
+        val conversationTitle = extras.getCharSequence(Notification.EXTRA_CONVERSATION_TITLE)?.toString()
+        if (!conversationTitle.isNullOrBlank()) {
+            return true
+        }
+
+        // 3. EXTRA_SUB_TEXT often holds the group name in WhatsApp
+        val subText = extras.getCharSequence(Notification.EXTRA_SUB_TEXT)?.toString()
+        if (!subText.isNullOrBlank() && !subText.equals(sender, ignoreCase = true)) {
+            return true
+        }
+
+        // 4. Check MessagingStyle bundles to see if individual sender differs from thread title
+        val messages = extras.getParcelableArray(Notification.EXTRA_MESSAGES)
+        if (messages != null && messages.isNotEmpty()) {
+            for (msg in messages) {
+                val bundle = msg as? Bundle ?: continue
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    val person = bundle.getParcelable<Person>("sender_person")
+                    val personName = person?.name?.toString()
+                    if (!personName.isNullOrBlank() &&
+                        !personName.equals("You", ignoreCase = true) &&
+                        !personName.equals(sender, ignoreCase = true)) {
+                        return true
+                    }
+                } else {
+                    val msgSender = bundle.getCharSequence("sender")?.toString()
+                    if (!msgSender.isNullOrBlank() &&
+                        !msgSender.equals("You", ignoreCase = true) &&
+                        !msgSender.equals(sender, ignoreCase = true)) {
+                        return true
+                    }
+                }
+            }
+        }
+
+        return false
     }
 
     private fun speakOut(text: String) {
