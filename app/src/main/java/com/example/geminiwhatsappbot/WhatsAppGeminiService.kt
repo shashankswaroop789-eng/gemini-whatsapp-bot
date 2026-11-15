@@ -62,12 +62,17 @@ class WhatsAppGeminiService : NotificationListenerService(), TextToSpeech.OnInit
 
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
-            val result = tts?.setLanguage(Locale.US)
-            if (result != TextToSpeech.LANG_MISSING_DATA && result != TextToSpeech.LANG_NOT_SUPPORTED) {
-                isTtsReady = true
-                applySpeechRate()
-                Log.d(TAG, "TextToSpeech initialized successfully.")
+            val inLocale = Locale("en", "IN")
+            val inSupported = tts?.isLanguageAvailable(inLocale)
+            if (inSupported == TextToSpeech.LANG_AVAILABLE || inSupported == TextToSpeech.LANG_COUNTRY_AVAILABLE) {
+                tts?.setLanguage(inLocale)
+                Log.d(TAG, "TextToSpeech initialized with English (India) locale.")
+            } else {
+                tts?.setLanguage(Locale.getDefault())
+                Log.d(TAG, "TextToSpeech initialized with default locale.")
             }
+            isTtsReady = true
+            applySpeechRate()
         } else {
             Log.e(TAG, "TextToSpeech initialization failed with status $status")
         }
@@ -188,8 +193,9 @@ class WhatsAppGeminiService : NotificationListenerService(), TextToSpeech.OnInit
                 return
             }
 
+            val chameleonEnabled = prefs.getBoolean("chameleon_enabled", true)
             serviceScope.launch {
-                val reply = generateGeminiReply(sender, actualMessageText, persona, apiKey)
+                val reply = generateGeminiReply(sender, actualMessageText, persona, apiKey, chameleonEnabled)
                 if (!reply.isNullOrBlank() && !reply.contains("[NO_REPLY]")) {
                     Log.d(TAG, "Generated reply for '$sender': '$reply'")
 
@@ -321,26 +327,41 @@ class WhatsAppGeminiService : NotificationListenerService(), TextToSpeech.OnInit
         tts?.speak(text, TextToSpeech.QUEUE_ADD, null, "WA_VOICE_" + System.currentTimeMillis())
     }
 
-    private fun generateGeminiReply(sender: String, message: String, persona: String, apiKey: String): String? {
+    private fun generateGeminiReply(sender: String, message: String, persona: String, apiKey: String, chameleonEnabled: Boolean = true): String? {
         return try {
+            val chameleonInstruction = if (chameleonEnabled) {
+                """
+                
+                5. LANGUAGE & DIALECT CHAMELEON (CRITICAL):
+                   - ALWAYS match the sender's exact language, script, and dialect!
+                   - HINGLISH: If the incoming message is in Hinglish (Hindi written in Latin/English alphabet, e.g., 'kya haal hai', 'bhai', 'paise bhej do', 'kahan ho', 'kaise ho', 'thoda kaam tha', 'kuch bolna tha'):
+                     You MUST reply in fluent, natural, casual contemporary Hinglish using Latin letters (e.g., 'Haan Dad, abhi check karke batata hu!', 'Bhai thoda busy hu, free hoke call karta hu!'). NEVER reply in formal English to a Hinglish text.
+                   - HINDI DEVANAGARI: If the message is in Hindi script (e.g. 'नमस्ते', 'कैसे हो'), reply in natural Hindi script.
+                   - ENGLISH: If the message is in English (e.g. 'Hey, are you free?'), reply in natural English.
+                   - MIXED: Seamlessly match the sender's natural mix of words like a close Indian friend or family member.
+                """.trimIndent()
+            } else ""
+
             val systemInstruction = if (persona == "grok") {
                 """
                 You are managing WhatsApp personal auto-replies for the user.
                 Personality: Grok Mode (witty, slightly sarcastic, clever, candid, but helpful and friendly).
                 Rules:
-                1. Always reply in the first person ('I') as the phone owner.
+                1. Always reply in the first person ('I' or 'main' in Hinglish) as the phone owner.
                 2. Keep responses very short (1 to 2 sentences max) suitable for WhatsApp.
                 3. If the contact asks a question requiring personal confirmation, banter a bit and mention you'll get back to them shortly.
-                4. DE-ESCALATION ON HOSTILITY: If the incoming message is angry, aggressive, abusive, or uses profanity directed at you, DO NOT trade insults or escalate. Instead, respond with calm composure or gentle disarming humor to de-escalate (e.g., 'Whoa, rough day? Let's talk later when things cool down.' or 'Everything okay? I'll catch up with you in a bit.').
+                4. DE-ESCALATION ON HOSTILITY: If the incoming message is angry, aggressive, abusive, or uses profanity directed at you, DO NOT trade insults or escalate. Instead, respond with calm composure or gentle disarming humor to de-escalate.
+                $chameleonInstruction
                 """.trimIndent()
             } else {
                 """
                 You are managing WhatsApp auto-replies for the user.
                 Rules:
-                1. Always reply in the first person ('I') as the phone owner.
+                1. Always reply in the first person ('I' or 'main' in Hinglish) as the phone owner.
                 2. Be polite, natural, and concise (1 to 2 sentences max).
                 3. Never write robotic disclaimers.
                 4. If the message is hostile or insulting, remain calm and professional without escalating.
+                $chameleonInstruction
                 """.trimIndent()
             }
 
