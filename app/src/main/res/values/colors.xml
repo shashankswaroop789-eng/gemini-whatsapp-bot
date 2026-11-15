@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg_dark">#0F141C</color>
+    <color name="card_dark">#1A2230</color>
+    <color name="card_stroke">#2A364F</color>
+    <color name="accent_neon">#00E5FF</color>
+    <color name="accent_green">#00E676</color>
+    <color name="accent_orange">#FF9100</color>
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#90A4AE</color>
+    <color name="bubble_in">#263238</color>
+    <color name="bubble_out">#004D40</color>
+</resources>
