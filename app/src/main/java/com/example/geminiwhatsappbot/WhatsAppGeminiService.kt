@@ -106,8 +106,9 @@ class WhatsAppGeminiService : NotificationListenerService(), TextToSpeech.OnInit
 
         if (actualMessageText.isBlank()) return
 
-        // 3. Filter out system status text
-        if (actualMessageText.contains("new messages", ignoreCase = true) ||
+        // 3. Filter out system status text and WhatsApp bundle summaries
+        if (actualMessageText.contains("new message", ignoreCase = true) ||
+            actualMessageText.contains("messages from", ignoreCase = true) ||
             actualMessageText.contains("WhatsApp Web", ignoreCase = true) ||
             actualMessageText.contains("Checking for new messages", ignoreCase = true)) {
             return
@@ -386,10 +387,10 @@ class WhatsAppGeminiService : NotificationListenerService(), TextToSpeech.OnInit
                 put("reply", reply)
             }
 
-            // Keep top 15 most recent
+            // Strictly keep the last 10 entries (delete older ones)
             val newArray = JSONArray()
             newArray.put(item)
-            for (i in 0 until minOf(array.length(), 14)) {
+            for (i in 0 until minOf(array.length(), 9)) {
                 newArray.put(array.getJSONObject(i))
             }
 

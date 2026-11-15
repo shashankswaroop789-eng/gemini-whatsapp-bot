@@ -56,6 +56,7 @@ class MainActivity : AppCompatActivity() {
         val btnCheckUpdate = findViewById<Button>(R.id.btnCheckUpdate)
         val btnHeaderUpdate = findViewById<ImageButton>(R.id.btnHeaderUpdate)
         val tvVersionTag = findViewById<TextView>(R.id.tvVersionTag)
+        val btnClearHistory = findViewById<TextView>(R.id.btnClearHistory)
         tvStatHeard = findViewById(R.id.tvStatHeard)
         tvStatReplied = findViewById(R.id.tvStatReplied)
         tvStatLoops = findViewById(R.id.tvStatLoops)
@@ -63,6 +64,12 @@ class MainActivity : AppCompatActivity() {
         seekBarVoiceRate = findViewById(R.id.seekBarVoiceRate)
         llActivityFeed = findViewById(R.id.llActivityFeed)
         tvNoActivity = findViewById(R.id.tvNoActivity)
+
+        btnClearHistory?.setOnClickListener {
+            prefs.edit().putString("activity_history", "[]").apply()
+            refreshLiveStatsAndFeed()
+            Toast.makeText(this, "Chronicle purged ✓", Toast.LENGTH_SHORT).show()
+        }
 
         tvVersionTag.text = "Version ${UpdateManager.CURRENT_VERSION} • Titanium Edition"
 
@@ -170,15 +177,28 @@ class MainActivity : AppCompatActivity() {
         tvStatReplied.text = prefs.getInt("replies_sent", 0).toString()
         tvStatLoops.text = prefs.getInt("loops_prevented", 0).toString()
 
-        // Render Activity Chronicle
+        // Render Activity Chronicle (Strictly Last 10 with internal scroll)
         val raw = prefs.getString("activity_history", "[]") ?: "[]"
         try {
             val array = JSONArray(raw)
+            val tvFeedCounter = findViewById<TextView>(R.id.tvFeedCounter)
             if (array.length() > 0) {
                 tvNoActivity.visibility = View.GONE
                 llActivityFeed.removeAllViews()
 
-                for (i in 0 until minOf(array.length(), 6)) {
+                // Clamp to max 10 and persist cleanup if older items existed
+                val count = minOf(array.length(), 10)
+                tvFeedCounter?.text = "$count / 10 RECENT"
+
+                if (array.length() > 10) {
+                    val pruned = JSONArray()
+                    for (k in 0 until 10) {
+                        pruned.put(array.getJSONObject(k))
+                    }
+                    prefs.edit().putString("activity_history", pruned.toString()).apply()
+                }
+
+                for (i in 0 until count) {
                     val item = array.getJSONObject(i)
                     val time = item.optString("time", "")
                     val sender = item.optString("sender", "Contact")
@@ -255,6 +275,7 @@ class MainActivity : AppCompatActivity() {
                     llActivityFeed.addView(itemContainer)
                 }
             } else {
+                tvFeedCounter?.text = "0 / 10 RECENT"
                 tvNoActivity.visibility = View.VISIBLE
             }
         } catch (e: Exception) {
