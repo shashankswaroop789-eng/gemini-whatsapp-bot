@@ -7,9 +7,11 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
+import android.view.animation.LinearInterpolator
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -25,6 +27,7 @@ import org.json.JSONArray
 class MainActivity : AppCompatActivity() {
 
     private lateinit var glowRing: View
+    private lateinit var dialRing: View
     private lateinit var tvStatHeard: TextView
     private lateinit var tvStatReplied: TextView
     private lateinit var tvStatLoops: TextView
@@ -33,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var llActivityFeed: LinearLayout
     private lateinit var tvNoActivity: TextView
     private lateinit var pulseAnimator: ObjectAnimator
+    private lateinit var dialAnimator: ObjectAnimator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +45,7 @@ class MainActivity : AppCompatActivity() {
         val prefs = getSharedPreferences("bot_prefs", Context.MODE_PRIVATE)
 
         glowRing = findViewById(R.id.glowRing)
+        dialRing = findViewById(R.id.dialRing)
         val apiKeyInput = findViewById<EditText>(R.id.apiKeyInput)
         val radioGrok = findViewById<RadioButton>(R.id.radioGrok)
         val radioProfessional = findViewById<RadioButton>(R.id.radioProfessional)
@@ -59,10 +64,10 @@ class MainActivity : AppCompatActivity() {
         llActivityFeed = findViewById(R.id.llActivityFeed)
         tvNoActivity = findViewById(R.id.tvNoActivity)
 
-        tvVersionTag.text = "Version ${UpdateManager.CURRENT_VERSION}"
+        tvVersionTag.text = "Version ${UpdateManager.CURRENT_VERSION} • Titanium Edition"
 
-        // 1. START COOL PULSING ANIMATION ON STATUS ORB
-        startPulsingAnimation()
+        // 1. START LUXURY CHRONO & HALO ANIMATIONS
+        startLuxuryAnimations()
 
         // 2. Populate UI with stored settings
         apiKeyInput.setText(prefs.getString("gemini_api_key", ""))
@@ -93,12 +98,19 @@ class MainActivity : AppCompatActivity() {
 
         // 4. Permission Button
         btnPermission.setOnClickListener {
+            it.animate().scaleX(0.96f).scaleY(0.96f).setDuration(80).withEndAction {
+                it.animate().scaleX(1.0f).scaleY(1.0f).setDuration(120).start()
+            }.start()
             startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
             Toast.makeText(this, "Enable 'Gemini WhatsApp Bot' permission", Toast.LENGTH_SHORT).show()
         }
 
-        // 5. Save Button
+        // 5. Save Button with Tactile Feedback
         btnSave.setOnClickListener {
+            it.animate().scaleX(0.96f).scaleY(0.96f).setDuration(80).withEndAction {
+                it.animate().scaleX(1.0f).scaleY(1.0f).setDuration(120).start()
+            }.start()
+
             val apiKey = apiKeyInput.text.toString().trim()
             val selectedPersona = if (radioGrok.isChecked) "grok" else "professional"
 
@@ -109,11 +121,12 @@ class MainActivity : AppCompatActivity() {
                 .putBoolean("auto_reply_enabled", toggleAutoReply.isChecked)
                 .apply()
 
-            Toast.makeText(this, "Settings saved successfully! ✓", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Configuration Saved ✓", Toast.LENGTH_SHORT).show()
         }
 
         // 6. Check for Update Buttons
         val triggerUpdateCheck = {
+            btnHeaderUpdate.animate().rotationBy(360f).setDuration(600).start()
             UpdateManager.checkForUpdate(this, isManualCheck = true)
         }
         btnCheckUpdate.setOnClickListener { triggerUpdateCheck() }
@@ -123,15 +136,24 @@ class MainActivity : AppCompatActivity() {
         UpdateManager.checkForUpdate(this, isManualCheck = false)
     }
 
-    private fun startPulsingAnimation() {
-        val scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f, 1.35f)
-        val scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0f, 1.35f)
-        val alpha = PropertyValuesHolder.ofFloat(View.ALPHA, 0.9f, 0.2f)
+    private fun startLuxuryAnimations() {
+        // Luxury Breathing Halo (Soft scale & alpha luminescence)
+        val scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f, 1.26f)
+        val scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0f, 1.26f)
+        val alpha = PropertyValuesHolder.ofFloat(View.ALPHA, 0.9f, 0.25f)
 
         pulseAnimator = ObjectAnimator.ofPropertyValuesHolder(glowRing, scaleX, scaleY, alpha).apply {
-            duration = 1400
+            duration = 2200
             repeatCount = ValueAnimator.INFINITE
             repeatMode = ValueAnimator.REVERSE
+            start()
+        }
+
+        // Watchmaker Tourbillon Outer Dial Rotation
+        dialAnimator = ObjectAnimator.ofFloat(dialRing, View.ROTATION, 0f, 360f).apply {
+            duration = 20000
+            repeatCount = ValueAnimator.INFINITE
+            interpolator = LinearInterpolator()
             start()
         }
     }
@@ -148,7 +170,7 @@ class MainActivity : AppCompatActivity() {
         tvStatReplied.text = prefs.getInt("replies_sent", 0).toString()
         tvStatLoops.text = prefs.getInt("loops_prevented", 0).toString()
 
-        // Render Activity Feed
+        // Render Activity Chronicle
         val raw = prefs.getString("activity_history", "[]") ?: "[]"
         try {
             val array = JSONArray(raw)
@@ -163,28 +185,74 @@ class MainActivity : AppCompatActivity() {
                     val incoming = item.optString("incoming", "")
                     val reply = item.optString("reply", "")
 
-                    val container = LinearLayout(this).apply {
+                    val isError = reply.contains("Error", ignoreCase = true)
+
+                    // Luxury Glass Item Container
+                    val itemContainer = LinearLayout(this).apply {
                         orientation = LinearLayout.VERTICAL
-                        setPadding(0, 8, 0, 8)
+                        val bg = GradientDrawable().apply {
+                            setColor(Color.parseColor("#151821"))
+                            setStroke(2, Color.parseColor("#252C3D"))
+                            cornerRadius = 14f
+                        }
+                        background = bg
+                        setPadding(24, 18, 24, 18)
+                        val lp = LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                        ).apply {
+                            setMargins(0, 0, 0, 16)
+                        }
+                        layoutParams = lp
                     }
 
-                    val tvIncoming = TextView(this).apply {
-                        text = "📩 [$time] $sender: $incoming"
-                        setTextColor(Color.parseColor("#B0BEC5"))
+                    // Sender & Timestamp Row
+                    val metaRow = LinearLayout(this).apply {
+                        orientation = LinearLayout.HORIZONTAL
+                    }
+                    val tvSender = TextView(this).apply {
+                        text = sender
+                        setTextColor(Color.parseColor("#F1F5F9"))
                         textSize = 12f
                         setTypeface(null, Typeface.BOLD)
+                        layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                    }
+                    val tvTime = TextView(this).apply {
+                        text = time
+                        setTextColor(Color.parseColor("#64748B"))
+                        textSize = 10f
+                    }
+                    metaRow.addView(tvSender)
+                    metaRow.addView(tvTime)
+
+                    // Incoming Message
+                    val tvIncoming = TextView(this).apply {
+                        text = "\"$incoming\""
+                        setTextColor(Color.parseColor("#94A3B8"))
+                        textSize = 11.5f
+                        setPadding(0, 6, 0, 6)
                     }
 
+                    // Bot Reply Bubble
                     val tvReply = TextView(this).apply {
-                        text = "↳ 💬 Bot Replying: \"$reply\""
-                        setTextColor(Color.parseColor("#00E676"))
-                        textSize = 12f
-                        setPadding(16, 2, 0, 0)
+                        text = reply
+                        setTextColor(if (isError) Color.parseColor("#F59E0B") else Color.parseColor("#E2E8F0"))
+                        textSize = 11.5f
+                        setTypeface(null, if (isError) Typeface.BOLD else Typeface.NORMAL)
+                        val replyBg = GradientDrawable().apply {
+                            setColor(if (isError) Color.parseColor("#261C14") else Color.parseColor("#1B2230"))
+                            setStroke(2, if (isError) Color.parseColor("#B45309") else Color.parseColor("#384561"))
+                            cornerRadius = 10f
+                        }
+                        background = replyBg
+                        setPadding(20, 12, 20, 12)
                     }
 
-                    container.addView(tvIncoming)
-                    container.addView(tvReply)
-                    llActivityFeed.addView(container)
+                    itemContainer.addView(metaRow)
+                    itemContainer.addView(tvIncoming)
+                    itemContainer.addView(tvReply)
+
+                    llActivityFeed.addView(itemContainer)
                 }
             } else {
                 tvNoActivity.visibility = View.VISIBLE
@@ -197,6 +265,9 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         if (::pulseAnimator.isInitialized) {
             pulseAnimator.cancel()
+        }
+        if (::dialAnimator.isInitialized) {
+            dialAnimator.cancel()
         }
         super.onDestroy()
     }

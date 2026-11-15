@@ -1,13 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="bg_dark">#0F141C</color>
-    <color name="card_dark">#1A2230</color>
-    <color name="card_stroke">#2A364F</color>
-    <color name="accent_neon">#00E5FF</color>
-    <color name="accent_green">#00E676</color>
-    <color name="accent_orange">#FF9100</color>
-    <color name="text_primary">#FFFFFF</color>
-    <color name="text_secondary">#90A4AE</color>
-    <color name="bubble_in">#263238</color>
-    <color name="bubble_out">#004D40</color>
+    <!-- Base Canvas: Deep Obsidian -->
+    <color name="bg_obsidian">#0A0B0E</color>
+    <color name="bg_dark">#0A0B0E</color>
+
+    <!-- Glassmorphism Surfaces -->
+    <color name="surface_glass">#12151D</color>
+    <color name="card_dark">#12151D</color>
+    <color name="surface_glass_elevated">#181D28</color>
+    <color name="surface_input">#0D0F15</color>
+
+    <!-- Hairline Strokes -->
+    <color name="stroke_titanium">#232A3B</color>
+    <color name="card_stroke">#232A3B</color>
+    <color name="stroke_titanium_glow">#475569</color>
+    <color name="stroke_divider">#1A202E</color>
+
+    <!-- Luxury Accents: Brushed Titanium & Moonstone -->
+    <color name="accent_titanium">#E2E8F0</color>
+    <color name="accent_silver">#CBD5E1</color>
+    <color name="accent_moonstone">#94A3B8</color>
+    <color name="accent_neon">#E2E8F0</color>
+    <color name="accent_green">#10B981</color>
+    <color name="accent_orange">#F59E0B</color>
+
+    <!-- Typography -->
+    <color name="text_primary">#F8FAFC</color>
+    <color name="text_secondary">#94A3B8</color>
+    <color name="text_tertiary">#64748B</color>
+
+    <!-- Chat Bubbles -->
+    <color name="bubble_in">#151923</color>
+    <color name="bubble_out">#1A2234</color>
+    <color name="bubble_out_border">#384561</color>
 </resources>

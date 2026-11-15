@@ -3,42 +3,55 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_dark"
+    android:background="@color/bg_obsidian"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="36dp">
 
-        <!-- HEADER WITH GLOWING ANIMATED ORB -->
+        <!-- 1. ATELIER LUXURY HEADER -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="20dp">
 
-            <!-- Animated Glowing Status Indicator -->
+            <!-- Watchmaker Precision Chrono Dial & Halo -->
             <FrameLayout
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="54dp"
+                android:layout_height="54dp"
                 android:layout_marginEnd="16dp">
 
+                <!-- Breathing Aura Halo -->
                 <View
                     android:id="@+id/glowRing"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_gravity="center"
-                    android:background="@android:drawable/presence_online" />
+                    android:background="@drawable/bg_chrono_halo" />
 
+                <!-- Rotating Dashed Tourbillon Dial -->
+                <View
+                    android:id="@+id/dialRing"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_chrono_dial" />
+
+                <!-- Central Titanium Jewel -->
                 <View
                     android:id="@+id/coreOrb"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
                     android:layout_gravity="center"
-                    android:background="@android:drawable/presence_online" />
+                    android:background="@drawable/bg_chrono_core" />
             </FrameLayout>
 
             <LinearLayout
@@ -47,52 +60,86 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="GROK WHATSAPP BOT"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.05"
-                    android:textColor="@color/accent_neon" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
-                <TextView
-                    android:id="@+id/tvStatusSubtitle"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="GEMINI ATELIER"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.08"
+                        android:textColor="@color/accent_titanium" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="PROTECTED"
+                        android:textSize="9sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.12"
+                        android:textColor="@color/accent_moonstone"
+                        android:background="@drawable/bg_badge_titanium"
+                        android:paddingStart="6dp"
+                        android:paddingEnd="6dp"
+                        android:paddingTop="2dp"
+                        android:paddingBottom="2dp" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="AI Active • Loop-Shield Armed"
-                    android:textSize="12sp"
-                    android:textColor="@color/accent_green" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="2dp">
+
+                    <View
+                        android:layout_width="6dp"
+                        android:layout_height="6dp"
+                        android:background="@drawable/bg_chrono_core"
+                        android:layout_marginEnd="6dp" />
+
+                    <TextView
+                        android:id="@+id/tvStatusSubtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Neural Shield Active • Zero Repetition"
+                        android:textSize="11sp"
+                        android:textColor="@color/text_secondary" />
+                </LinearLayout>
             </LinearLayout>
 
-            <!-- Check for updates icon button -->
+            <!-- Sync Button -->
             <ImageButton
                 android:id="@+id/btnHeaderUpdate"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:background="@drawable/bg_btn_outline"
                 android:src="@android:drawable/ic_popup_sync"
-                app:tint="@color/accent_neon"
+                app:tint="@color/accent_titanium"
+                android:padding="10dp"
                 android:contentDescription="Check for updates" />
         </LinearLayout>
 
-        <!-- LIVE STATS BAR -->
-        <com.google.android.material.card.MaterialCardView
+        <!-- 2. LUXURY TELEMETRY BAR -->
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardBackgroundColor="@color/card_dark"
-            app:strokeColor="@color/card_stroke"
-            app:strokeWidth="1dp">
+            android:background="@drawable/bg_card_glass"
+            android:padding="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="16dp">
+                android:orientation="horizontal">
 
-                <!-- Stat 1: Heard -->
+                <!-- Stat 1: Messages Monitored -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -106,23 +153,26 @@
                         android:layout_height="wrap_content"
                         android:text="0"
                         android:textSize="22sp"
+                        android:fontFamily="sans-serif-light"
                         android:textStyle="bold"
                         android:textColor="@color/text_primary" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Messages"
-                        android:textSize="11sp"
-                        android:textColor="@color/text_secondary" />
+                        android:text="SCANNED"
+                        android:textSize="9sp"
+                        android:letterSpacing="0.12"
+                        android:layout_marginTop="2dp"
+                        android:textColor="@color/text_tertiary" />
                 </LinearLayout>
 
                 <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
-                    android:background="@color/card_stroke" />
+                    android:background="@color/stroke_divider" />
 
-                <!-- Stat 2: Replied -->
+                <!-- Stat 2: Replies Sent -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -136,23 +186,26 @@
                         android:layout_height="wrap_content"
                         android:text="0"
                         android:textSize="22sp"
+                        android:fontFamily="sans-serif-light"
                         android:textStyle="bold"
-                        android:textColor="@color/accent_green" />
+                        android:textColor="@color/accent_titanium" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Replies Sent"
-                        android:textSize="11sp"
-                        android:textColor="@color/text_secondary" />
+                        android:text="DISPATCHED"
+                        android:textSize="9sp"
+                        android:letterSpacing="0.12"
+                        android:layout_marginTop="2dp"
+                        android:textColor="@color/text_tertiary" />
                 </LinearLayout>
 
                 <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
-                    android:background="@color/card_stroke" />
+                    android:background="@color/stroke_divider" />
 
-                <!-- Stat 3: Loops Blocked -->
+                <!-- Stat 3: Loops Prevented -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -166,136 +219,169 @@
                         android:layout_height="wrap_content"
                         android:text="0"
                         android:textSize="22sp"
+                        android:fontFamily="sans-serif-light"
                         android:textStyle="bold"
                         android:textColor="@color/accent_orange" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Loops Blocked"
-                        android:textSize="11sp"
-                        android:textColor="@color/text_secondary" />
+                        android:text="SHIELDED"
+                        android:textSize="9sp"
+                        android:letterSpacing="0.12"
+                        android:layout_marginTop="2dp"
+                        android:textColor="@color/text_tertiary" />
                 </LinearLayout>
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+        </FrameLayout>
 
-        <!-- RECENT LIVE ACTIVITY FEED -->
-        <com.google.android.material.card.MaterialCardView
+        <!-- 3. RECENT LIVE ACTIVITY CHRONICLE -->
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardBackgroundColor="@color/card_dark"
-            app:strokeColor="@color/card_stroke"
-            app:strokeWidth="1dp">
+            android:background="@drawable/bg_card_glass"
+            android:padding="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="⚡ LIVE BOT ACTIVITY FEED"
-                    android:textSize="13sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/accent_neon" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="8dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="ACTIVITY CHRONICLE"
+                        android:textSize="11sp"
+                        android:letterSpacing="0.15"
+                        android:textStyle="bold"
+                        android:textColor="@color/accent_moonstone" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="LIVE FEED"
+                        android:textSize="9sp"
+                        android:textColor="@color/text_tertiary"
+                        android:letterSpacing="0.1" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/llActivityFeed"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginTop="8dp">
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/tvNoActivity"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="No messages yet. Waiting for incoming WhatsApp chat..."
+                        android:padding="12dp"
+                        android:gravity="center"
+                        android:text="Awaiting incoming WhatsApp transmissions..."
                         android:textSize="12sp"
-                        android:textColor="@color/text_secondary" />
+                        android:textColor="@color/text_tertiary" />
                 </LinearLayout>
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+        </FrameLayout>
 
-        <!-- CONTROLS & SETTINGS CARD -->
-        <com.google.android.material.card.MaterialCardView
+        <!-- 4. SYSTEM PREFERENCES & CONTROLS -->
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardBackgroundColor="@color/card_dark"
-            app:strokeColor="@color/card_stroke"
-            app:strokeWidth="1dp">
+            android:background="@drawable/bg_card_glass"
+            android:padding="18dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="SETTINGS &amp; CONTROLS"
-                    android:textSize="13sp"
+                    android:text="SYSTEM PREFERENCES"
+                    android:textSize="11sp"
+                    android:letterSpacing="0.15"
                     android:textStyle="bold"
-                    android:textColor="@color/accent_neon" />
+                    android:textColor="@color/accent_moonstone"
+                    android:layout_marginBottom="14dp" />
 
                 <!-- API Key -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:text="Gemini API Key"
-                    android:textSize="12sp"
+                    android:text="GEMINI API KEY"
+                    android:textSize="10sp"
+                    android:letterSpacing="0.1"
+                    android:textStyle="bold"
                     android:textColor="@color/text_secondary" />
 
                 <EditText
                     android:id="@+id/apiKeyInput"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:hint="Paste Gemini API Key"
-                    android:textColorHint="@color/text_secondary"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="6dp"
+                    android:hint="Paste Gemini API Key from Google AI Studio"
+                    android:textColorHint="@color/text_tertiary"
                     android:textColor="@color/text_primary"
                     android:inputType="textPassword"
-                    android:background="@android:drawable/editbox_background_normal"
-                    android:padding="10dp"
+                    android:background="@drawable/bg_input_luxury"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
                     android:textSize="13sp" />
 
-                <!-- Persona Switcher -->
+                <!-- Personality Selection -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="Personality Mode"
-                    android:textSize="12sp"
+                    android:text="RESPONSE PERSONA"
+                    android:textSize="10sp"
+                    android:letterSpacing="0.1"
+                    android:textStyle="bold"
                     android:textColor="@color/text_secondary" />
 
                 <RadioGroup
                     android:id="@+id/radioGroupPersona"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp">
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_input_luxury"
+                    android:padding="4dp">
 
                     <RadioButton
                         android:id="@+id/radioGrok"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="🌶️ Grok Mode (Witty, clever &amp; de-escalating)"
+                        android:text="✨ Grok Mode (Witty, clever &amp; de-escalating)"
                         android:textColor="@color/text_primary"
-                        android:checked="true" />
+                        android:textSize="12sp"
+                        android:checked="true"
+                        android:padding="8dp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/stroke_divider" />
 
                     <RadioButton
                         android:id="@+id/radioProfessional"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="👔 Professional Mode (Polite &amp; concise)"
-                        android:textColor="@color/text_primary" />
+                        android:text="🎩 Executive Mode (Concise, polished &amp; polite)"
+                        android:textColor="@color/text_primary"
+                        android:textSize="12sp"
+                        android:padding="8dp" />
                 </RadioGroup>
 
                 <!-- Voice Toggle -->
@@ -303,35 +389,49 @@
                     android:id="@+id/toggleVoice"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:text="Voice Announcement (Speak Incoming &amp; Reply)"
+                    android:layout_marginTop="16dp"
+                    android:text="Voice Acoustic Briefing\n(Speaks incoming msg &amp; outgoing reply)"
                     android:textColor="@color/text_primary"
-                    android:checked="true" />
+                    android:textSize="12sp"
+                    android:checked="true"
+                    app:thumbTint="@color/accent_titanium"
+                    app:trackTint="@color/stroke_titanium" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/stroke_divider"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp" />
 
                 <!-- Auto-Reply Toggle -->
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/toggleAutoReply"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="WhatsApp Auto-Reply Active"
+                    android:text="WhatsApp Auto-Reply Active\n(Enforces anti-flood shield &amp; loop protection)"
                     android:textColor="@color/text_primary"
-                    android:checked="true" />
+                    android:textSize="12sp"
+                    android:checked="true"
+                    app:thumbTint="@color/accent_titanium"
+                    app:trackTint="@color/stroke_titanium" />
 
-                <!-- Voice Speed Slider -->
+                <!-- Voice Cadence Slider -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="16dp"
                     android:gravity="center_vertical">
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Voice Speech Rate"
-                        android:textSize="12sp"
+                        android:text="ACOUSTIC CADENCE"
+                        android:textSize="10sp"
+                        android:letterSpacing="0.1"
+                        android:textStyle="bold"
                         android:textColor="@color/text_secondary" />
 
                     <TextView
@@ -340,8 +440,8 @@
                         android:layout_height="wrap_content"
                         android:text="1.0x"
                         android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/accent_neon" />
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="@color/accent_titanium" />
                 </LinearLayout>
 
                 <SeekBar
@@ -350,45 +450,49 @@
                     android:layout_height="wrap_content"
                     android:max="10"
                     android:progress="4"
-                    android:layout_marginTop="4dp" />
+                    android:thumbTint="@color/accent_titanium"
+                    android:progressTint="@color/accent_silver"
+                    android:progressBackgroundTint="@color/stroke_titanium"
+                    android:layout_marginTop="8dp" />
 
                 <!-- Action Buttons -->
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnSave"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="Save Settings"
-                    android:textColor="#000000"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="20dp"
+                    android:text="Save Configuration"
+                    android:textColor="#0B0C10"
+                    android:textSize="12sp"
+                    android:letterSpacing="0.08"
                     android:textStyle="bold"
-                    app:backgroundTint="@color/accent_neon" />
+                    android:background="@drawable/bg_btn_titanium" />
 
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnPermission"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Notification Access Permission"
-                    android:textColor="@color/text_primary"
-                    style="@style/Widget.Material3.Button.OutlinedButton" />
+                    android:layout_height="44dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Verify Notification Access"
+                    android:textColor="@color/accent_silver"
+                    android:textSize="12sp"
+                    android:letterSpacing="0.05"
+                    android:background="@drawable/bg_btn_outline" />
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+        </FrameLayout>
 
-        <!-- AUTO-UPDATE FOOTER -->
-        <com.google.android.material.card.MaterialCardView
+        <!-- 5. REFINED OTA FOOTER -->
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="16dp"
-            app:cardBackgroundColor="@color/card_dark"
-            app:strokeColor="@color/card_stroke"
-            app:strokeWidth="1dp">
+            android:background="@drawable/bg_card_glass"
+            android:padding="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="16dp">
+                android:gravity="center_vertical">
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -400,28 +504,31 @@
                         android:id="@+id/tvVersionTag"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Version v1.0.0"
-                        android:textSize="14sp"
+                        android:text="Version v1.0.0 (Titanium)"
+                        android:textSize="13sp"
                         android:textStyle="bold"
                         android:textColor="@color/text_primary" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Auto-update from GitHub enabled"
+                        android:text="Autonomous OTA updater enabled"
                         android:textSize="11sp"
-                        android:textColor="@color/text_secondary" />
+                        android:textColor="@color/text_tertiary" />
                 </LinearLayout>
 
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnCheckUpdate"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Check Update"
-                    android:textSize="12sp"
-                    style="@style/Widget.Material3.Button.TonalButton" />
+                    android:layout_height="38dp"
+                    android:text="Check Release"
+                    android:textColor="@color/accent_titanium"
+                    android:textSize="11sp"
+                    android:background="@drawable/bg_btn_outline"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp" />
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+        </FrameLayout>
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
