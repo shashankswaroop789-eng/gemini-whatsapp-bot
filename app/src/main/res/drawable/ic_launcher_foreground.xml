@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Outer Titanium Tourbillon Ring -->
+    <path
+        android:strokeColor="#475569"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M54,54m-26,0a26,26 0,1 1,52 0a26,26 0,1 1,-52 0" />
+
+    <!-- 4 Cardinal Chrono Ticks -->
+    <path
+        android:strokeColor="#CBD5E1"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M54,23 L54,29 M54,79 L54,85 M23,54 L29,54 M79,54 L85,54" />
+
+    <!-- Inner Hairline Bezel -->
+    <path
+        android:strokeColor="#334155"
+        android:strokeWidth="1"
+        android:pathData="M54,54m-20,0a20,20 0,1 1,40 0a20,20 0,1 1,-40 0" />
+
+    <!-- Central Gemini 4-Point Star Emblem -->
+    <!-- Center (54, 54), top (54, 37), right (71, 54), bottom (54, 71), left (37, 54) -->
+    <path
+        android:fillColor="#F8FAFC"
+        android:pathData="M54,37 C54,46.5 61.5,54 71,54 C61.5,54 54,61.5 54,71 C54,61.5 46.5,54 37,54 C46.5,54 54,46.5 54,37 Z" />
+
+    <!-- Titanium Shimmer Highlight on Star Core -->
+    <path
+        android:fillColor="#94A3B8"
+        android:pathData="M54,46 C54,50.5 57.5,54 62,54 C57.5,54 54,57.5 54,62 C54,57.5 50.5,54 46,54 C50.5,54 54,50.5 54,46 Z" />
+
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,50 C54,52.2 55.8,54 58,54 C55.8,54 54,55.8 54,58 C54,55.8 52.2,54 50,54 C52.2,54 54,52.2 54,50 Z" />
+
+    <!-- Luxury Status Emerald Jewel (Protected indicator) -->
+    <path
+        android:fillColor="#10B981"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1"
+        android:pathData="M68,68m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" />
+</vector>

@@ -109,7 +109,15 @@ class WhatsAppGeminiService : NotificationListenerService(), TextToSpeech.OnInit
             return
         }
 
-        // 3. ANTI-LOOP CHECK: Inspect MessagingStyle messages to verify if the latest message was sent by US
+        // 3. EXCLUSION BLACKLIST SHIELD: Never auto-reply to blacklisted contacts/keywords
+        val blacklistStr = prefs.getString("blacklist_contacts", "") ?: ""
+        if (isBlacklisted(sender, blacklistStr)) {
+            Log.d(TAG, "BLACKLIST SHIELD: Ignored message from blacklisted contact '$sender'.")
+            incrementStat("loops_prevented")
+            return
+        }
+
+        // 4. ANTI-LOOP CHECK: Inspect MessagingStyle messages to verify if the latest message was sent by US
         val (actualMessageText, isFromMe, msgTimestamp) = extractLatestMessageInfo(extras)
 
         if (isFromMe) {
@@ -194,8 +202,11 @@ class WhatsAppGeminiService : NotificationListenerService(), TextToSpeech.OnInit
             }
 
             val chameleonEnabled = prefs.getBoolean("chameleon_enabled", true)
+            val vipProfilesStr = prefs.getString("vip_profiles", "") ?: ""
+            val vipRole = resolveVipRole(sender, vipProfilesStr)
+
             serviceScope.launch {
-                val reply = generateGeminiReply(sender, actualMessageText, persona, apiKey, chameleonEnabled)
+                val reply = generateGeminiReply(sender, actualMessageText, persona, apiKey, chameleonEnabled, vipRole)
                 if (!reply.isNullOrBlank() && !reply.contains("[NO_REPLY]")) {
                     Log.d(TAG, "Generated reply for '$sender': '$reply'")
 
@@ -323,11 +334,51 @@ class WhatsAppGeminiService : NotificationListenerService(), TextToSpeech.OnInit
         return false
     }
 
+    /**
+     * Checks if the sender name or number matches any keyword in the blacklist.
+     */
+    private fun isBlacklisted(sender: String, blacklistStr: String): Boolean {
+        if (blacklistStr.isBlank()) return false
+        val tokens = blacklistStr.split(",").map { it.trim().lowercase() }.filter { it.isNotBlank() }
+        val s = sender.lowercase()
+        for (token in tokens) {
+            if (s.contains(token)) return true
+        }
+        return false
+    }
+
+    /**
+     * Resolves the VIP relationship role for a contact if configured (e.g. Dad: Parent, Viditi: Partner).
+     */
+    private fun resolveVipRole(sender: String, vipProfilesStr: String): String? {
+        if (vipProfilesStr.isBlank()) return null
+        val entries = vipProfilesStr.split(",").map { it.trim() }.filter { it.isNotBlank() }
+        val s = sender.lowercase()
+        for (entry in entries) {
+            val parts = entry.split(":")
+            if (parts.size >= 2) {
+                val name = parts[0].trim().lowercase()
+                val role = parts.subList(1, parts.size).joinToString(":").trim()
+                if (s.contains(name) || name.contains(s)) {
+                    return role
+                }
+            }
+        }
+        return null
+    }
+
     private fun speakOut(text: String) {
         tts?.speak(text, TextToSpeech.QUEUE_ADD, null, "WA_VOICE_" + System.currentTimeMillis())
     }
 
-    private fun generateGeminiReply(sender: String, message: String, persona: String, apiKey: String, chameleonEnabled: Boolean = true): String? {
+    private fun generateGeminiReply(
+        sender: String,
+        message: String,
+        persona: String,
+        apiKey: String,
+        chameleonEnabled: Boolean = true,
+        vipRole: String? = null
+    ): String? {
         return try {
             val chameleonInstruction = if (chameleonEnabled) {
                 """
@@ -342,6 +393,19 @@ class WhatsAppGeminiService : NotificationListenerService(), TextToSpeech.OnInit
                 """.trimIndent()
             } else ""
 
+            val vipInstruction = if (!vipRole.isNullOrBlank()) {
+                """
+                
+                6. VIP RELATIONSHIP INSTRUCTION (TOP PRIORITY):
+                   - SENDER RELATIONSHIP: '$sender' is your '$vipRole'.
+                   - TAILOR TONE AND INTIMACY ACCORDINGLY:
+                     * If Partner / Girlfriend / Boyfriend / Spouse / Crush: Be warm, affectionate, caring, reassuring, and playful (e.g. 'Hey, don't worry at all! I'll call you as soon as I'm free ❤️'). NEVER be sarcastic, cold, dismissive, or treat them like a random contact.
+                     * If Parent / Mother / Father / Elder: Be respectful, warmly affectionate, caring, and helpful.
+                     * If Friend / Best Friend / Brother / Bro: Use casual, relaxed, fun banter and friendly slang.
+                     * If Work / Colleague / Client: Be polite, clear, and professional.
+                """.trimIndent()
+            } else ""
+
             val systemInstruction = if (persona == "grok") {
                 """
                 You are managing WhatsApp personal auto-replies for the user.
@@ -352,6 +416,7 @@ class WhatsAppGeminiService : NotificationListenerService(), TextToSpeech.OnInit
                 3. If the contact asks a question requiring personal confirmation, banter a bit and mention you'll get back to them shortly.
                 4. DE-ESCALATION ON HOSTILITY: If the incoming message is angry, aggressive, abusive, or uses profanity directed at you, DO NOT trade insults or escalate. Instead, respond with calm composure or gentle disarming humor to de-escalate.
                 $chameleonInstruction
+                $vipInstruction
                 """.trimIndent()
             } else {
                 """
@@ -362,6 +427,7 @@ class WhatsAppGeminiService : NotificationListenerService(), TextToSpeech.OnInit
                 3. Never write robotic disclaimers.
                 4. If the message is hostile or insulting, remain calm and professional without escalating.
                 $chameleonInstruction
+                $vipInstruction
                 """.trimIndent()
             }
 

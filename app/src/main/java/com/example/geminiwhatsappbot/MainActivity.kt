@@ -53,6 +53,8 @@ class MainActivity : AppCompatActivity() {
         val toggleAutoReply = findViewById<SwitchMaterial>(R.id.toggleAutoReply)
         val toggleIgnoreGroups = findViewById<SwitchMaterial>(R.id.toggleIgnoreGroups)
         val toggleChameleon = findViewById<SwitchMaterial>(R.id.toggleChameleon)
+        val etBlacklist = findViewById<EditText>(R.id.etBlacklist)
+        val etVipProfiles = findViewById<EditText>(R.id.etVipProfiles)
         val btnPermission = findViewById<Button>(R.id.btnPermission)
         val btnSave = findViewById<Button>(R.id.btnSave)
         val btnCheckUpdate = findViewById<Button>(R.id.btnCheckUpdate)
@@ -90,6 +92,8 @@ class MainActivity : AppCompatActivity() {
         toggleAutoReply.isChecked = prefs.getBoolean("auto_reply_enabled", true)
         toggleIgnoreGroups.isChecked = prefs.getBoolean("ignore_groups", true)
         toggleChameleon.isChecked = prefs.getBoolean("chameleon_enabled", true)
+        etBlacklist.setText(prefs.getString("blacklist_contacts", ""))
+        etVipProfiles.setText(prefs.getString("vip_profiles", ""))
 
         val currentRate = prefs.getFloat("speech_rate", 1.0f)
         val progress = ((currentRate - 0.6f) / 0.1f).toInt().coerceIn(0, 10)
@@ -132,6 +136,8 @@ class MainActivity : AppCompatActivity() {
                 .putBoolean("auto_reply_enabled", toggleAutoReply.isChecked)
                 .putBoolean("ignore_groups", toggleIgnoreGroups.isChecked)
                 .putBoolean("chameleon_enabled", toggleChameleon.isChecked)
+                .putString("blacklist_contacts", etBlacklist.text.toString().trim())
+                .putString("vip_profiles", etVipProfiles.text.toString().trim())
                 .apply()
 
             Toast.makeText(this, "Configuration Saved ✓", Toast.LENGTH_SHORT).show()
