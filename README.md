@@ -4,14 +4,23 @@
 [![Kotlin](https://img.shields.io/badge/Language-Kotlin_1.9+-7F52FF?logo=kotlin&logoColor=white)](https://kotlinlang.org)
 [![Gemini](https://img.shields.io/badge/AI-Google_Gemini_3.5_Flash-4285F4?logo=google&logoColor=white)](https://aistudio.google.com)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-[![Latest Release](https://img.shields.io/badge/Release-v1.0.0-00E5FF)](https://github.com/shashankswaroop789-eng/gemini-whatsapp-bot/releases)
+[![Latest Release](https://img.shields.io/badge/Release-v1.5.0-00E5FF)](https://github.com/shashankswaroop789-eng/gemini-whatsapp-bot/releases)
 
-An intelligent Android assistant that monitors incoming WhatsApp messages, announces them via **Text-to-Speech**, generates witty or professional replies using **Google Gemini 3.5 Flash**, informs you of what it is replying out loud, and sends the response automatically—all while remaining **100% immune to WhatsApp account bans**.
+An intelligent Android assistant that monitors incoming WhatsApp messages, announces them via **Ultra-Realistic Neural AI Voice** (ChatGPT Voice & Gemini Live style), generates witty or professional replies using **Google Gemini 3.5 Flash**, informs you of what it is replying out loud, and sends the response automatically—all while remaining **100% immune to WhatsApp account bans**.
 
 ---
 
 ## ✨ Features
 
+- **🎙️ Neural Human AI Voice Studio (NEW in v1.5.0)**: Replaces robotic, monotone Android speech with studio-grade neural voices featuring natural human breathing, expressive prosody, and emotional cadence:
+  - 🌸 **Aoede / Sky**: Warm, friendly female voice (Gemini Live & ChatGPT Sky style)
+  - 🎙️ **Puck / Breeze**: Conversational, witty male voice (Gemini Live & ChatGPT Breeze style)
+  - 🎩 **Charon / Ember**: Deep, calm, executive male voice
+  - 🇮🇳 **Neerja**: Indian Hinglish & English natural acoustic inflection
+  - 🔊 **Live Audition**: One-tap voice preview directly within the app!
+- **👥 WhatsApp Group Chat Shield**: Filter out noisy group chats and exclusively respond to 1-on-1 direct conversations.
+- **🦎 Language Chameleon (Hinglish, Hindi & English)**: Automatically detects incoming language and dialects (Romanized Hinglish, Hindi, English) and replies in matching dialect without breaking character.
+- **🛡️ VIP Relationship Profiles & Exclusion Blacklist**: Assign tailored conversational tones to VIPs (Partner, Parents, Best Friend) and blacklist work/banking notifications.
 - **🧠 Grok Mode Persona**: Witty, clever, candid, and slightly sarcastic banter inspired by xAI's Grok.
 - **🛡️ Hostility De-escalator**: Automatically detects angry, abusive, or profane messages and responds with calm, disarming composure instead of starting arguments.
 - **🗣️ Two-Stage Voice Briefing**:

@@ -55,6 +55,11 @@ class MainActivity : AppCompatActivity() {
         val toggleChameleon = findViewById<SwitchMaterial>(R.id.toggleChameleon)
         val etBlacklist = findViewById<EditText>(R.id.etBlacklist)
         val etVipProfiles = findViewById<EditText>(R.id.etVipProfiles)
+        val radioVoiceAoede = findViewById<RadioButton>(R.id.radioVoiceAoede)
+        val radioVoicePuck = findViewById<RadioButton>(R.id.radioVoicePuck)
+        val radioVoiceCharon = findViewById<RadioButton>(R.id.radioVoiceCharon)
+        val radioVoiceNeerja = findViewById<RadioButton>(R.id.radioVoiceNeerja)
+        val btnAuditionVoice = findViewById<Button>(R.id.btnAuditionVoice)
         val btnPermission = findViewById<Button>(R.id.btnPermission)
         val btnSave = findViewById<Button>(R.id.btnSave)
         val btnCheckUpdate = findViewById<Button>(R.id.btnCheckUpdate)
@@ -95,6 +100,43 @@ class MainActivity : AppCompatActivity() {
         etBlacklist.setText(prefs.getString("blacklist_contacts", ""))
         etVipProfiles.setText(prefs.getString("vip_profiles", ""))
 
+        val voicePersona = prefs.getString("voice_persona", "aoede")
+        when (voicePersona) {
+            "puck" -> radioVoicePuck.isChecked = true
+            "charon" -> radioVoiceCharon.isChecked = true
+            "neerja" -> radioVoiceNeerja.isChecked = true
+            else -> radioVoiceAoede.isChecked = true
+        }
+
+        // Audition Selected AI Neural Voice
+        btnAuditionVoice.setOnClickListener {
+            it.animate().scaleX(0.96f).scaleY(0.96f).setDuration(80).withEndAction {
+                it.animate().scaleX(1.0f).scaleY(1.0f).setDuration(120).start()
+            }.start()
+
+            val apiKey = apiKeyInput.text.toString().trim()
+            val persona = if (radioVoicePuck.isChecked) "puck" else if (radioVoiceCharon.isChecked) "charon" else if (radioVoiceNeerja.isChecked) "neerja" else "aoede"
+            val rate = 0.6f + (seekBarVoiceRate.progress * 0.1f)
+
+            Toast.makeText(this, "Synthesizing AI Neural Voice sample...", Toast.LENGTH_SHORT).show()
+
+            val sampleText = when (persona) {
+                "puck" -> "Hey! I'm speaking with Gemini Puck voice. Ready to handle your WhatsApp messages with witty banter!"
+                "charon" -> "Good day. Charon voice active. Your correspondence will be handled with calm precision."
+                "neerja" -> "Namaste! Neerja voice is ready. Aapke WhatsApp messages ka natural Hinglish reply ready hai."
+                else -> "Hello Shashank! I am your AI assistant speaking with a natural human voice, just like Gemini Live."
+            }
+
+            NeuralVoiceManager.speak(
+                context = this,
+                text = sampleText,
+                apiKey = apiKey,
+                persona = persona,
+                rate = rate,
+                ttsFallback = null
+            )
+        }
+
         val currentRate = prefs.getFloat("speech_rate", 1.0f)
         val progress = ((currentRate - 0.6f) / 0.1f).toInt().coerceIn(0, 10)
         seekBarVoiceRate.progress = progress
@@ -128,10 +170,12 @@ class MainActivity : AppCompatActivity() {
 
             val apiKey = apiKeyInput.text.toString().trim()
             val selectedPersona = if (radioGrok.isChecked) "grok" else "professional"
+            val selectedVoicePersona = if (radioVoicePuck.isChecked) "puck" else if (radioVoiceCharon.isChecked) "charon" else if (radioVoiceNeerja.isChecked) "neerja" else "aoede"
 
             prefs.edit()
                 .putString("gemini_api_key", apiKey)
                 .putString("persona", selectedPersona)
+                .putString("voice_persona", selectedVoicePersona)
                 .putBoolean("voice_enabled", toggleVoice.isChecked)
                 .putBoolean("auto_reply_enabled", toggleAutoReply.isChecked)
                 .putBoolean("ignore_groups", toggleIgnoreGroups.isChecked)
@@ -296,6 +340,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
+        NeuralVoiceManager.stopPlayback()
         if (::pulseAnimator.isInitialized) {
             pulseAnimator.cancel()
         }

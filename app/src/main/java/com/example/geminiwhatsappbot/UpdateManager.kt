@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit
 object UpdateManager {
 
     private const val TAG = "UpdateManager"
-    const val CURRENT_VERSION = "v1.4.0"
+    const val CURRENT_VERSION = "v1.5.0"
     private const val REPO_OWNER = "shashankswaroop789-eng"
     private const val REPO_NAME = "gemini-whatsapp-bot"
     private const val GITHUB_API_URL = "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/releases/latest"

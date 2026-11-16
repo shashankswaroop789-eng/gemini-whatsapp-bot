@@ -185,7 +185,7 @@ class WhatsAppGeminiService : NotificationListenerService(), TextToSpeech.OnInit
         Log.d(TAG, "Processing valid incoming message from '$sender': '$actualMessageText'")
 
         // 8. VOICE STEP 1: Announce incoming message
-        if (voiceEnabled && isTtsReady) {
+        if (voiceEnabled) {
             val brief = if (actualMessageText.length > 120) actualMessageText.substring(0, 117) + "..." else actualMessageText
             speakOut("Message from $sender: $brief")
         }
@@ -221,7 +221,7 @@ class WhatsAppGeminiService : NotificationListenerService(), TextToSpeech.OnInit
                     lastReplyTimePerSender[sender] = System.currentTimeMillis()
 
                     // VOICE STEP 2: Announce what the bot is replying before/as sending!
-                    if (voiceEnabled && isTtsReady) {
+                    if (voiceEnabled) {
                         speakOut("I am replying to $sender: $reply")
                     }
 
@@ -368,7 +368,18 @@ class WhatsAppGeminiService : NotificationListenerService(), TextToSpeech.OnInit
     }
 
     private fun speakOut(text: String) {
-        tts?.speak(text, TextToSpeech.QUEUE_ADD, null, "WA_VOICE_" + System.currentTimeMillis())
+        val prefs = getSharedPreferences("bot_prefs", Context.MODE_PRIVATE)
+        val apiKey = prefs.getString("gemini_api_key", "") ?: ""
+        val persona = prefs.getString("voice_persona", "aoede") ?: "aoede"
+        val rate = prefs.getFloat("speech_rate", 1.0f)
+        NeuralVoiceManager.speak(
+            context = this,
+            text = text,
+            apiKey = apiKey,
+            persona = persona,
+            rate = rate,
+            ttsFallback = if (isTtsReady) tts else null
+        )
     }
 
     private fun generateGeminiReply(
@@ -546,6 +557,7 @@ class WhatsAppGeminiService : NotificationListenerService(), TextToSpeech.OnInit
     }
 
     override fun onDestroy() {
+        NeuralVoiceManager.stopPlayback()
         tts?.stop()
         tts?.shutdown()
         super.onDestroy()

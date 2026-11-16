@@ -542,6 +542,93 @@
                     android:paddingEnd="14dp"
                     android:textSize="12sp" />
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/stroke_divider"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp" />
+
+                <!-- Neural Voice Persona Selector -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="NEURAL VOICE PERSONA (HUMAN AI VOICE)"
+                    android:textSize="10sp"
+                    android:letterSpacing="0.1"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_secondary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Studio-grade neural voice with natural breathing &amp; inflection"
+                    android:textSize="10sp"
+                    android:textColor="@color/text_tertiary" />
+
+                <RadioGroup
+                    android:id="@+id/radioGroupVoice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp">
+
+                    <RadioButton
+                        android:id="@+id/radioVoiceAoede"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="🌸 Aoede (Warm Female • Gemini Live / GPT Sky style)"
+                        android:textColor="@color/text_primary"
+                        android:textSize="12sp"
+                        android:checked="true"
+                        android:buttonTint="@color/accent_titanium"
+                        android:padding="6dp" />
+
+                    <RadioButton
+                        android:id="@+id/radioVoicePuck"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="🎙️ Puck (Conversational Male • Gemini Live / GPT Breeze style)"
+                        android:textColor="@color/text_primary"
+                        android:textSize="12sp"
+                        android:buttonTint="@color/accent_titanium"
+                        android:padding="6dp" />
+
+                    <RadioButton
+                        android:id="@+id/radioVoiceCharon"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="🎩 Charon (Deep &amp; Calm Male • Executive Persona)"
+                        android:textColor="@color/text_primary"
+                        android:textSize="12sp"
+                        android:buttonTint="@color/accent_titanium"
+                        android:padding="6dp" />
+
+                    <RadioButton
+                        android:id="@+id/radioVoiceNeerja"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="🇮🇳 Neerja (Indian Hinglish &amp; English Natural Tone)"
+                        android:textColor="@color/text_primary"
+                        android:textSize="12sp"
+                        android:buttonTint="@color/accent_titanium"
+                        android:padding="6dp" />
+                </RadioGroup>
+
+                <!-- Audition Voice Button -->
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnAuditionVoice"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="8dp"
+                    android:text="🔊 AUDITION SELECTED AI VOICE"
+                    android:textSize="11sp"
+                    android:letterSpacing="0.08"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@color/accent_titanium"
+                    android:background="@drawable/bg_input_luxury" />
+
                 <!-- Voice Cadence Slider -->
                 <LinearLayout
                     android:layout_width="match_parent"
